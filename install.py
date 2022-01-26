@@ -74,14 +74,14 @@ system(f"mkfs.fat -F32 {disk}1")
 
 system(f"mkswap {disk}2 ; swapon {disk}2")
 
-system("mount {disk}3 /mnt")
+system(f"mount {disk}3 /mnt")
 
 system(f"pacstrap /mnt base {kernels} linux-firmware")
 
 system("genfstab -U /mnt >> /mnt/etc/fstab")
 
-system(f"""
-chroot /mnt /bin/bash <<
+with open("SCRIPT","w") as f:
+    f.write(f"""
 ln -sf /usr/share/zoneinfo/{time_zone} /etc/localtime
 hwclock --systohc
 
@@ -114,5 +114,6 @@ grub-mkconfig -o /boot/grub/grub.cfg
 pacman -S networkmanager
 systemctl enable NetworkManager
 """)
+system("chroot /mnt /bin/bash << cat SCRIPT")
 system("unmount -l /mnt")
 system("echo reboot now")
