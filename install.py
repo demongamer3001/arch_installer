@@ -114,6 +114,6 @@ grub-mkconfig -o /boot/grub/grub.cfg
 pacman -S networkmanager
 systemctl enable NetworkManager
 """)
-system("chroot /mnt /bin/bash << cat SCRIPT")
-system("unmount -l /mnt")
+system("arch-chroot /mnt /bin/bash << cat SCRIPT")
+system("umount -l /mnt")
 system("echo reboot now")
