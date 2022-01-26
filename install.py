@@ -1,6 +1,5 @@
 print("Loading...")
 
-import requests
 from os import system
 from time import sleep
 
@@ -10,24 +9,23 @@ def error(error,exit=False):
 def warning(warning):
     print(f"W: {warning}")
 
-if requests.get("https://google.com").status_code == 404:
-    exit(1)
 system("pacman -Syy")
 
 _kernels = "linux linux-lts linux-hardened linux-zen".split(" ")
 _editors = "nano vim vi nvim".split(" ")
-_packages = "net-tools python3 neofetch git".split(" ")
-_des = "xfce4".split(" ") # Desktop environments
+_packages = "net-tools python3 python-pip neofetch git".split(" ")
+_des = "None xfce4".split(" ") # Desktop environments
 
 def list_to_str(x):
     res=""
-    for a in x: res+=x+" "
+    for a in x: res+=a+" "
     return res.strip()
 def choose(arr: list, STRING=True):
     print()
     c = 0
     for item in arr:
         print(f"[{c}] {item}")
+        c+=1
     x = input(": ").split(" ")
     selected = []
     for selection in x:
@@ -83,8 +81,7 @@ system(f"pacstrap /mnt base {kernels} linux-firmware")
 system("genfstab -U /mnt >> /mnt/etc/fstab")
 
 system(f"""
-chroot /mnt /bin/bash <<END
-
+chroot /mnt /bin/bash <<
 ln -sf /usr/share/zoneinfo/{time_zone} /etc/localtime
 hwclock --systohc
 
@@ -116,8 +113,6 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 pacman -S networkmanager
 systemctl enable NetworkManager
-
-END
 """)
 system("unmount -l /mnt")
-system("reboot now")
+system("echo reboot now")
